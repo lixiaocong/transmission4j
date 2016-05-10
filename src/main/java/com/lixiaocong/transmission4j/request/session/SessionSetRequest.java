@@ -28,42 +28,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j.request.torrent.accessors;
+package com.lixiaocong.transmission4j.request.session;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import com.lixiaocong.transmission4j.request.TransmissionRequest;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-public class TorrentGetRequestTest
+public class SessionSetRequest extends TransmissionRequest
 {
-    @Test
-    public void testTorrentGetRequest()
+    private Map<String, Object> arguments;
+
+    public SessionSetRequest()
     {
-        List<Integer> ids = new LinkedList<>();
-        ids.add(1);
-        ids.add(2);
-        ids.add(3);
+        super("session-set");
+        this.arguments = new HashMap<>();
+    }
 
-        TorrentGetRequest getRequest = new TorrentGetRequest(ids);
-        ObjectMapper mapper = new ObjectMapper();
-        try
-        {
-            System.out.println(mapper.writeValueAsString(getRequest));
-        } catch (JsonProcessingException e)
-        {
-            e.printStackTrace();
-        }
+    public Map<String, Object> getArguments()
+    {
+        return arguments;
+    }
 
-        TorrentGetRequest getRequestWithNoID = new TorrentGetRequest(null);
-        try
-        {
-            System.out.println(mapper.writeValueAsString(getRequestWithNoID));
-        } catch (JsonProcessingException e)
-        {
-            e.printStackTrace();
-        }
+    public void setArguments(Map<String, Object> arguments)
+    {
+        this.arguments = arguments;
+    }
+
+
+    //set the arguments
+
+    public void setAltSpeedDown(long speed)
+    {
+        arguments.put("alt-speed-down", speed);
+    }
+
+    public void setAltSpeedEnabled(boolean enabled)
+    {
+        arguments.put("alt-speed-enabled", enabled);
     }
 }

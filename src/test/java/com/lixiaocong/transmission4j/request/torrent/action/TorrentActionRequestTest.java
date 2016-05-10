@@ -41,7 +41,7 @@ import java.util.List;
 public class TorrentActionRequestTest
 {
     @Test
-    public void testTorrentStartRequest()
+    public void testTorrentActionRequest()
     {
         List<Integer> ids = new LinkedList<>();
         ids.add(1);

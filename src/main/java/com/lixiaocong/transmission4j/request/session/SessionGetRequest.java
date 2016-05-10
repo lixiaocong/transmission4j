@@ -28,42 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j.request.torrent.accessors;
+package com.lixiaocong.transmission4j.request.session;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import com.lixiaocong.transmission4j.request.TransmissionRequest;
 
-import java.util.LinkedList;
-import java.util.List;
-
-public class TorrentGetRequestTest
+public class SessionGetRequest extends TransmissionRequest
 {
-    @Test
-    public void testTorrentGetRequest()
+    public SessionGetRequest()
     {
-        List<Integer> ids = new LinkedList<>();
-        ids.add(1);
-        ids.add(2);
-        ids.add(3);
-
-        TorrentGetRequest getRequest = new TorrentGetRequest(ids);
-        ObjectMapper mapper = new ObjectMapper();
-        try
-        {
-            System.out.println(mapper.writeValueAsString(getRequest));
-        } catch (JsonProcessingException e)
-        {
-            e.printStackTrace();
-        }
-
-        TorrentGetRequest getRequestWithNoID = new TorrentGetRequest(null);
-        try
-        {
-            System.out.println(mapper.writeValueAsString(getRequestWithNoID));
-        } catch (JsonProcessingException e)
-        {
-            e.printStackTrace();
-        }
+        super("session-get");
     }
 }
