@@ -28,29 +28,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j.request.torrent.action;
+package com.lixiaocong.transmission4j.request.torrent.accessors;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.lixiaocong.transmission4j.request.TransmissionRequest;
 
 import java.util.List;
 
-class TorrentActionArguments
+public class TorrentGetRequest extends TransmissionRequest
 {
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    List<Integer> ids;
+    private TorrentGetArguments arguments;
 
-    TorrentActionArguments(List<Integer> ids)
-    {
-        this.ids = ids;
+    public TorrentGetRequest(List<Integer> ids) {
+        super("torrent-get");
+        this.arguments = new TorrentGetArguments(ids);
     }
 
-    public List<Integer> getIds()
-    {
-        return ids;
+    public TorrentGetArguments getArguments() {
+        return arguments;
     }
 
-    public void setIds(List<Integer> ids)
-    {
-        this.ids = ids;
+    public void setArguments(TorrentGetArguments arguments) {
+        this.arguments = arguments;
     }
 }

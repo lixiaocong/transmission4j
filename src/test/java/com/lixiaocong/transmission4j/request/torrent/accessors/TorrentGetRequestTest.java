@@ -28,29 +28,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j.request.torrent.action;
+package com.lixiaocong.transmission4j.request.torrent.accessors;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Test;
 
+import java.util.LinkedList;
 import java.util.List;
 
-class TorrentActionArguments
+public class TorrentGetRequestTest
 {
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    List<Integer> ids;
-
-    TorrentActionArguments(List<Integer> ids)
+    @Test
+    public void TorrentGetRequestTest()
     {
-        this.ids = ids;
-    }
+        List<Integer> ids = new LinkedList<>();
+        ids.add(1);
+        ids.add(2);
+        ids.add(3);
 
-    public List<Integer> getIds()
-    {
-        return ids;
-    }
+        TorrentGetRequest getRequest = new TorrentGetRequest(ids);
+        ObjectMapper mapper = new ObjectMapper();
+        try
+        {
+            System.out.println(mapper.writeValueAsString(getRequest));
+        } catch (JsonProcessingException e)
+        {
+            e.printStackTrace();
+        }
 
-    public void setIds(List<Integer> ids)
-    {
-        this.ids = ids;
+        TorrentGetRequest getRequestWithNoID = new TorrentGetRequest(null);
+        try
+        {
+            System.out.println(mapper.writeValueAsString(getRequestWithNoID));
+        } catch (JsonProcessingException e)
+        {
+            e.printStackTrace();
+        }
     }
 }

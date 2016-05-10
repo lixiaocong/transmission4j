@@ -28,29 +28,60 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j.request.torrent.action;
+package com.lixiaocong.transmission4j.request.torrent.accessors;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.util.LinkedList;
 import java.util.List;
 
-class TorrentActionArguments
-{
+class TorrentGetArguments {
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    List<Integer> ids;
+    private List<Integer> ids;
 
-    TorrentActionArguments(List<Integer> ids)
-    {
+    private List<String> fields;
+
+    TorrentGetArguments(List<Integer> ids) {
         this.ids = ids;
+        this.fields = new LinkedList<>();
+        fields.add("id");
+        fields.add("name");
+        fields.add("isFinished");
+        fields.add("downloadDir");
+        fields.add("activityDate");
+        fields.add("addedDate");
+        fields.add("doneDate");
+        fields.add("dateCreated");
+        fields.add("bandwidthPriority");
+        fields.add("creator");
+        fields.add("desiredAvailable");
+        fields.add("files");
+        fields.add("isStalled");
+        fields.add("magnetLink");
+        fields.add("rateDownload");
+        fields.add("rateUpload");
+        fields.add("secondsDownloading");
+        fields.add("secondsSeeding");
+        fields.add("totalSize");
+        fields.add("uploadRatio");
+        fields.add("downloadedEver");
+        fields.add("percentDone");
+        fields.add("status");
     }
 
-    public List<Integer> getIds()
-    {
+    public List<Integer> getIds() {
         return ids;
     }
 
-    public void setIds(List<Integer> ids)
-    {
+    public void setIds(List<Integer> ids) {
         this.ids = ids;
+    }
+
+    public List<String> getFields() {
+        return fields;
+    }
+
+    public void setFields(List<String> fields) {
+        this.fields = fields;
     }
 }

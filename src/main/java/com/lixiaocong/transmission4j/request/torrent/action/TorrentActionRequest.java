@@ -34,11 +34,11 @@ import com.lixiaocong.transmission4j.request.TransmissionRequest;
 
 import java.util.List;
 
-public abstract class TorrentActionRequest extends TransmissionRequest
+abstract class TorrentActionRequest extends TransmissionRequest
 {
-    TorrentActionArguments arguments;
+    private TorrentActionArguments arguments;
 
-    public TorrentActionRequest(String method, List<Integer> ids)
+    TorrentActionRequest(String method, List<Integer> ids)
     {
         super(method);
         this.arguments = new TorrentActionArguments(ids);
