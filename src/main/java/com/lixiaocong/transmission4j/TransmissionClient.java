@@ -30,8 +30,13 @@
 
 package com.lixiaocong.transmission4j;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lixiaocong.transmission4j.exception.AuthException;
 import com.lixiaocong.transmission4j.exception.NetworkException;
+import com.lixiaocong.transmission4j.request.TransmissionRequest;
+import com.lixiaocong.transmission4j.request.torrent.action.TorrentStartRequest;
+import com.lixiaocong.transmission4j.response.TransmissionResponse;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 import java.io.BufferedReader;
@@ -40,6 +45,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 public class TransmissionClient
 {
@@ -70,15 +76,21 @@ public class TransmissionClient
         ourInstance.url = url;
     }
 
-    public String execute(String jsonRequest) throws NetworkException, AuthException
+    private TransmissionResponse execute(TransmissionRequest request) throws NetworkException, AuthException
     {
-        System.out.println(jsonRequest);
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonRequest = null;
+        try
+        {
+            jsonRequest = mapper.writeValueAsString(request);
+        } catch (JsonProcessingException e)
+        {
+            e.printStackTrace();
+        }
 
         //config the connection
         HttpURLConnection conn;
         PrintWriter out;
-        BufferedReader in;
-        String result = "";
 
         try
         {
@@ -103,20 +115,21 @@ public class TransmissionClient
             out.print(jsonRequest);
             out.flush();
 
-            in = new BufferedReader(new InputStreamReader(conn.getInputStream()));//if not auth will throw IOException
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String result = "";
             String line;
             while ((line = in.readLine()) != null)
             {
                 result += line;
             }
-            return result;
+            return mapper.readValue(result, TransmissionResponse.class);
         } catch (IOException e)
         {
             //there are 3 reasons to cause this exception
             //1.network exception
             //2.id is null
             //3.username or password wrong
-
+            //if the response String's format is not json , it should be transmission's bug
             int responseCode;
             try
             {
@@ -130,11 +143,18 @@ public class TransmissionClient
             if (responseCode == 409)
             {
                 id = conn.getHeaderFields().get("X-Transmission-Session-Id").get(0);
-                return execute(jsonRequest);
+                return execute(request);
             } else//password or username is wrong
             {
                 throw new AuthException("auth failed");
             }
         }
+    }
+
+    public boolean torrentStart(List<Integer> ids) throws AuthException, NetworkException
+    {
+        TransmissionRequest request = new TorrentStartRequest(ids);
+        TransmissionResponse response = execute(request);
+        return "success".equals(response.getResult());
     }
 }

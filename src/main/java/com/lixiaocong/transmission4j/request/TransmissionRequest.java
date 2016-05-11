@@ -32,7 +32,7 @@ package com.lixiaocong.transmission4j.request;
 
 public abstract class TransmissionRequest
 {
-    String method;
+    protected String method;
 
     public TransmissionRequest(String method)
     {

@@ -28,32 +28,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j;
+package com.lixiaocong.transmission4j.response;
 
-import com.lixiaocong.transmission4j.exception.AuthException;
-import com.lixiaocong.transmission4j.exception.NetworkException;
-import org.junit.Before;
-import org.junit.Test;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import static junit.framework.TestCase.assertTrue;
-
-public class TransmissionClientTest
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class TransmissionResponse
 {
-    private TransmissionClient client;
+    protected String result;
 
-    @Before
-    public void before() throws MalformedURLException
+    public String getResult()
     {
-        TransmissionClient.init("admin", "admin", new URL("http://192.168.1.120:9091/transmission/rpc"));
-        client = TransmissionClient.getInstance();
+        return result;
     }
 
-    @Test
-    public void testTorrentStart() throws AuthException, NetworkException
+    public void setResult(String result)
     {
-        assertTrue(client.torrentStart(null));
+        this.result = result;
     }
 }
