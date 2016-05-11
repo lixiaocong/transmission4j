@@ -36,18 +36,20 @@ import java.util.List;
 
 public class TorrentGetRequest extends TransmissionRequest
 {
-    private TorrentGetArguments arguments;
+    private TorrentGetRequestArguments arguments;
 
     public TorrentGetRequest(List<Integer> ids) {
         super("torrent-get");
-        this.arguments = new TorrentGetArguments(ids);
+        this.arguments = new TorrentGetRequestArguments(ids);
     }
 
-    public TorrentGetArguments getArguments() {
+    public TorrentGetRequestArguments getArguments()
+    {
         return arguments;
     }
 
-    public void setArguments(TorrentGetArguments arguments) {
+    public void setArguments(TorrentGetRequestArguments arguments)
+    {
         this.arguments = arguments;
     }
 }

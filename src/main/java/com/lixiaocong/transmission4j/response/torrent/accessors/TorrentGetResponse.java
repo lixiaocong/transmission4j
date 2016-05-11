@@ -28,47 +28,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j;
+package com.lixiaocong.transmission4j.response.torrent.accessors;
 
-import com.lixiaocong.transmission4j.response.torrent.accessors.Torrent;
-import org.junit.Before;
-import org.junit.Test;
+import com.lixiaocong.transmission4j.response.TransmissionResponse;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-
-import static junit.framework.TestCase.assertTrue;
-
-public class TransmissionClientTest
+public class TorrentGetResponse extends TransmissionResponse
 {
-    private TransmissionClient client;
+    private TorrentGetResponseArguments arguments;
 
-    @Before
-    public void before() throws MalformedURLException
+    public TorrentGetResponseArguments getArguments()
     {
-        TransmissionClient.init("admin", "admin", new URL("http://192.168.1.120:9091/transmission/rpc"));
-        client = TransmissionClient.getInstance();
+        return arguments;
     }
 
-    @Test
-    public void testTorrentStart() throws IOException
+    public void setArguments(TorrentGetResponseArguments arguments)
     {
-        assertTrue(client.torrentStart(null));
-    }
-
-    @Test
-    public void testTorrentStop() throws IOException
-    {
-        assertTrue(client.torrentStop(null));
-    }
-
-    @Test
-    public void testTorrentGetTest() throws IOException
-    {
-        List<Torrent> list = client.torrentGet(null);
-        for (Torrent torrent : list)
-            System.out.println(torrent);
+        this.arguments = arguments;
     }
 }

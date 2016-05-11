@@ -28,47 +28,62 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j;
+package com.lixiaocong.transmission4j.request.torrent.accessors;
 
-import com.lixiaocong.transmission4j.response.torrent.accessors.Torrent;
-import org.junit.Before;
-import org.junit.Test;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.LinkedList;
 import java.util.List;
 
-import static junit.framework.TestCase.assertTrue;
-
-public class TransmissionClientTest
+class TorrentGetRequestArguments
 {
-    private TransmissionClient client;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<Integer> ids;
 
-    @Before
-    public void before() throws MalformedURLException
+    private List<String> fields;
+
+    TorrentGetRequestArguments(List<Integer> ids)
     {
-        TransmissionClient.init("admin", "admin", new URL("http://192.168.1.120:9091/transmission/rpc"));
-        client = TransmissionClient.getInstance();
+        this.ids = ids;
+        this.fields = new LinkedList<>();
+        fields.add("id");
+        fields.add("name");
+        fields.add("isFinished");
+        fields.add("downloadDir");
+        fields.add("activityDate");
+        fields.add("addedDate");
+        fields.add("doneDate");
+        fields.add("dateCreated");
+        fields.add("bandwidthPriority");
+        fields.add("creator");
+        fields.add("desiredAvailable");
+        fields.add("files");
+        fields.add("isStalled");
+        fields.add("magnetLink");
+        fields.add("rateDownload");
+        fields.add("rateUpload");
+        fields.add("secondsDownloading");
+        fields.add("secondsSeeding");
+        fields.add("totalSize");
+        fields.add("uploadRatio");
+        fields.add("downloadedEver");
+        fields.add("percentDone");
+        fields.add("status");
     }
 
-    @Test
-    public void testTorrentStart() throws IOException
-    {
-        assertTrue(client.torrentStart(null));
+    public List<Integer> getIds() {
+        return ids;
     }
 
-    @Test
-    public void testTorrentStop() throws IOException
-    {
-        assertTrue(client.torrentStop(null));
+    public void setIds(List<Integer> ids) {
+        this.ids = ids;
     }
 
-    @Test
-    public void testTorrentGetTest() throws IOException
-    {
-        List<Torrent> list = client.torrentGet(null);
-        for (Torrent torrent : list)
-            System.out.println(torrent);
+    public List<String> getFields() {
+        return fields;
+    }
+
+    public void setFields(List<String> fields) {
+        this.fields = fields;
     }
 }

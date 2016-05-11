@@ -28,60 +28,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j.request.torrent.accessors;
+package com.lixiaocong.transmission4j.response.torrent.accessors;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+public class TorrentFile
+{
+    private long bytesCompleted;
+    private long length;
+    private String name;
 
-import java.util.LinkedList;
-import java.util.List;
-
-class TorrentGetArguments {
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<Integer> ids;
-
-    private List<String> fields;
-
-    TorrentGetArguments(List<Integer> ids) {
-        this.ids = ids;
-        this.fields = new LinkedList<>();
-        fields.add("id");
-        fields.add("name");
-        fields.add("isFinished");
-        fields.add("downloadDir");
-        fields.add("activityDate");
-        fields.add("addedDate");
-        fields.add("doneDate");
-        fields.add("dateCreated");
-        fields.add("bandwidthPriority");
-        fields.add("creator");
-        fields.add("desiredAvailable");
-        fields.add("files");
-        fields.add("isStalled");
-        fields.add("magnetLink");
-        fields.add("rateDownload");
-        fields.add("rateUpload");
-        fields.add("secondsDownloading");
-        fields.add("secondsSeeding");
-        fields.add("totalSize");
-        fields.add("uploadRatio");
-        fields.add("downloadedEver");
-        fields.add("percentDone");
-        fields.add("status");
+    public long getBytesCompleted()
+    {
+        return bytesCompleted;
     }
 
-    public List<Integer> getIds() {
-        return ids;
+    public void setBytesCompleted(long bytesCompleted)
+    {
+        this.bytesCompleted = bytesCompleted;
     }
 
-    public void setIds(List<Integer> ids) {
-        this.ids = ids;
+    public long getLength()
+    {
+        return length;
     }
 
-    public List<String> getFields() {
-        return fields;
+    public void setLength(long length)
+    {
+        this.length = length;
     }
 
-    public void setFields(List<String> fields) {
-        this.fields = fields;
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
     }
 }

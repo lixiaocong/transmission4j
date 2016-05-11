@@ -35,9 +35,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lixiaocong.transmission4j.exception.AuthException;
 import com.lixiaocong.transmission4j.exception.NetworkException;
 import com.lixiaocong.transmission4j.request.TransmissionRequest;
+import com.lixiaocong.transmission4j.request.torrent.accessors.TorrentGetRequest;
 import com.lixiaocong.transmission4j.request.torrent.action.TorrentStartRequest;
 import com.lixiaocong.transmission4j.request.torrent.action.TorrentStopRequest;
 import com.lixiaocong.transmission4j.response.TransmissionResponse;
+import com.lixiaocong.transmission4j.response.torrent.accessors.Torrent;
+import com.lixiaocong.transmission4j.response.torrent.accessors.TorrentGetResponse;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 import java.io.BufferedReader;
@@ -77,7 +80,7 @@ public class TransmissionClient
         ourInstance.url = url;
     }
 
-    private TransmissionResponse execute(TransmissionRequest request) throws NetworkException, AuthException
+    private String execute(TransmissionRequest request) throws NetworkException, AuthException
     {
         ObjectMapper mapper = new ObjectMapper();
         String jsonRequest = null;
@@ -123,7 +126,7 @@ public class TransmissionClient
             {
                 result += line;
             }
-            return mapper.readValue(result, TransmissionResponse.class);
+            return result;
         } catch (IOException e)
         {
             //there are 3 reasons to cause this exception
@@ -152,17 +155,27 @@ public class TransmissionClient
         }
     }
 
-    public boolean torrentStart(List<Integer> ids) throws AuthException, NetworkException
+    public boolean torrentStart(List<Integer> ids) throws IOException
     {
         TransmissionRequest request = new TorrentStartRequest(ids);
-        TransmissionResponse response = execute(request);
+        ObjectMapper mapper = new ObjectMapper();
+        TransmissionResponse response = mapper.readValue(execute(request), TransmissionResponse.class);
         return "success".equals(response.getResult());
     }
 
-    public boolean torrentStop(List<Integer> ids) throws AuthException, NetworkException
+    public boolean torrentStop(List<Integer> ids) throws IOException
     {
         TransmissionRequest request = new TorrentStopRequest(ids);
-        TransmissionResponse response = execute(request);
+        ObjectMapper mapper = new ObjectMapper();
+        TransmissionResponse response = mapper.readValue(execute(request), TransmissionResponse.class);
         return "success".equals(response.getResult());
+    }
+
+    public List<Torrent> torrentGet(List<Integer> ids) throws IOException
+    {
+        TransmissionRequest request = new TorrentGetRequest(ids);
+        ObjectMapper mapper = new ObjectMapper();
+        TorrentGetResponse response = mapper.readValue(execute(request), TorrentGetResponse.class);
+        return response.getArguments().getTorrents();
     }
 }
