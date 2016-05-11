@@ -56,4 +56,11 @@ public class TransmissionClientTest
     {
         assertTrue(client.torrentStart(null));
     }
+
+    @Test
+    public void testTorrentStop() throws AuthException, NetworkException
+    {
+        assertTrue(client.torrentStop(null));
+    }
+
 }

@@ -36,6 +36,7 @@ import com.lixiaocong.transmission4j.exception.AuthException;
 import com.lixiaocong.transmission4j.exception.NetworkException;
 import com.lixiaocong.transmission4j.request.TransmissionRequest;
 import com.lixiaocong.transmission4j.request.torrent.action.TorrentStartRequest;
+import com.lixiaocong.transmission4j.request.torrent.action.TorrentStopRequest;
 import com.lixiaocong.transmission4j.response.TransmissionResponse;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 
@@ -154,6 +155,13 @@ public class TransmissionClient
     public boolean torrentStart(List<Integer> ids) throws AuthException, NetworkException
     {
         TransmissionRequest request = new TorrentStartRequest(ids);
+        TransmissionResponse response = execute(request);
+        return "success".equals(response.getResult());
+    }
+
+    public boolean torrentStop(List<Integer> ids) throws AuthException, NetworkException
+    {
+        TransmissionRequest request = new TorrentStopRequest(ids);
         TransmissionResponse response = execute(request);
         return "success".equals(response.getResult());
     }
