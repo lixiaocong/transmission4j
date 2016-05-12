@@ -38,6 +38,7 @@ import com.lixiaocong.transmission4j.request.TransmissionRequest;
 import com.lixiaocong.transmission4j.request.torrent.accessors.TorrentGetRequest;
 import com.lixiaocong.transmission4j.request.torrent.action.TorrentStartRequest;
 import com.lixiaocong.transmission4j.request.torrent.action.TorrentStopRequest;
+import com.lixiaocong.transmission4j.request.torrent.add.TorrentAddRequest;
 import com.lixiaocong.transmission4j.response.TransmissionResponse;
 import com.lixiaocong.transmission4j.response.torrent.accessors.Torrent;
 import com.lixiaocong.transmission4j.response.torrent.accessors.TorrentGetResponse;
@@ -171,6 +172,14 @@ public class TransmissionClient
         return "success".equals(response.getResult());
     }
 
+    public boolean torrentAdd(String metainfo) throws IOException
+    {
+        TransmissionRequest request = new TorrentAddRequest(metainfo);
+        ObjectMapper mapper = new ObjectMapper();
+        TransmissionResponse response = mapper.readValue(execute(request), TransmissionResponse.class);
+        return "success".equals(response.getResult());
+    }
+
     public List<Torrent> torrentGet(List<Integer> ids) throws IOException
     {
         TransmissionRequest request = new TorrentGetRequest(ids);
@@ -178,4 +187,5 @@ public class TransmissionClient
         TorrentGetResponse response = mapper.readValue(execute(request), TorrentGetResponse.class);
         return response.getArguments().getTorrents();
     }
+
 }

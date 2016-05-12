@@ -31,10 +31,14 @@
 package com.lixiaocong.transmission4j;
 
 import com.lixiaocong.transmission4j.response.torrent.accessors.Torrent;
+import com.sun.org.apache.xml.internal.security.utils.Base64;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -64,6 +68,19 @@ public class TransmissionClientTest
         assertTrue(client.torrentStop(null));
     }
 
+    @Test
+    public void testTorrentAdd() throws IOException
+    {
+        File file = new File("/Users/lixiaocong/Downloads/test.torrent");
+        InputStream in = new FileInputStream(file);
+        int len = in.available();
+        byte[] data = new byte[len];
+        in.read(data, 0, len);
+        String str = Base64.encode(data);
+        in.close();
+
+        assertTrue(client.torrentAdd(str));
+    }
     @Test
     public void testTorrentGetTest() throws IOException
     {

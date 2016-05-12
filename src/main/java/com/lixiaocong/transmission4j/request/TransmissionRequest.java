@@ -30,6 +30,9 @@
 
 package com.lixiaocong.transmission4j.request;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public abstract class TransmissionRequest
 {
     protected String method;
@@ -47,5 +50,19 @@ public abstract class TransmissionRequest
     public void setMethod(String method)
     {
         this.method = method;
+    }
+
+    @Override
+    public String toString()
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        try
+        {
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e)
+        {
+            e.printStackTrace();
+            return e.getMessage();
+        }
     }
 }
