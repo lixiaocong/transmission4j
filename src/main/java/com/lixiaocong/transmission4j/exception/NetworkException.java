@@ -30,9 +30,7 @@
 
 package com.lixiaocong.transmission4j.exception;
 
-import java.io.IOException;
-
-public class NetworkException extends IOException
+public class NetworkException extends Exception
 {
     public NetworkException(String message)
     {

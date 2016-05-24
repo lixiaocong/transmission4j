@@ -30,6 +30,8 @@
 
 package com.lixiaocong.transmission4j;
 
+import com.lixiaocong.transmission4j.exception.AuthException;
+import com.lixiaocong.transmission4j.exception.NetworkException;
 import com.lixiaocong.transmission4j.response.torrent.accessors.Torrent;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 import org.junit.Before;
@@ -40,7 +42,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
@@ -52,24 +53,23 @@ public class TransmissionClientTest
     @Before
     public void before() throws MalformedURLException
     {
-        TransmissionClient.init("admin", "admin", new URL("http://192.168.1.120:9091/transmission/rpc"));
-        client = TransmissionClient.getInstance();
+        client = new TransmissionClient("admin", "admin", "http://127.0.0.1:9091/transmission/rpc");
     }
 
     @Test
-    public void testTorrentStart() throws IOException
+    public void testTorrentStart() throws IOException, AuthException, NetworkException
     {
         assertTrue(client.torrentStart(null));
     }
 
     @Test
-    public void testTorrentStop() throws IOException
+    public void testTorrentStop() throws IOException, AuthException, NetworkException
     {
         assertTrue(client.torrentStop(null));
     }
 
     @Test
-    public void testTorrentAdd() throws IOException
+    public void testTorrentAdd() throws IOException, AuthException, NetworkException
     {
         File file = new File("/Users/lixiaocong/Downloads/test.torrent");
         InputStream in = new FileInputStream(file);
@@ -82,7 +82,7 @@ public class TransmissionClientTest
         assertTrue(client.torrentAdd(str));
     }
     @Test
-    public void testTorrentGetTest() throws IOException
+    public void testTorrentGetTest() throws IOException, AuthException, NetworkException
     {
         List<Torrent> list = client.torrentGet(null);
         for (Torrent torrent : list)

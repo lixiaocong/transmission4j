@@ -30,9 +30,7 @@
 
 package com.lixiaocong.transmission4j.exception;
 
-import java.io.IOException;
-
-public class AuthException extends IOException
+public class AuthException extends Exception
 {
     public AuthException(String message)
     {
