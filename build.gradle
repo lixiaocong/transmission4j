@@ -12,7 +12,8 @@ repositories {
 dependencies {
     compile(
             'com.fasterxml.jackson.core:jackson-databind:2.7.2',
-            'org.apache.httpcomponents:httpclient:4.5.2'
+            'org.apache.httpcomponents:httpclient:4.5.2',
+            'commons-logging:commons-logging:1.2'
     )
     testCompile 'junit:junit:4.12'
 }

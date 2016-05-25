@@ -53,7 +53,7 @@ public class TransmissionClientTest
     @Before
     public void before() throws MalformedURLException
     {
-        client = new TransmissionClient("admin", "admin", "http://127.0.0.1:9091/transmission/rpc");
+        client = new TransmissionClient("admin", "admin", "http://192.168.1.41:9091/transmission/rpc");
     }
 
     @Test

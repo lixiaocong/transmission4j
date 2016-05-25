@@ -30,6 +30,7 @@
 
 package com.lixiaocong.transmission4j;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lixiaocong.transmission4j.exception.AuthException;
 import com.lixiaocong.transmission4j.exception.NetworkException;
@@ -42,9 +43,12 @@ import com.lixiaocong.transmission4j.response.TransmissionResponse;
 import com.lixiaocong.transmission4j.response.torrent.accessors.Torrent;
 import com.lixiaocong.transmission4j.response.torrent.accessors.TorrentGetResponse;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
@@ -52,15 +56,17 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TransmissionClient
 {
+    private static Log logger = LogFactory.getLog(TransmissionClient.class);
+
     private String username;
     private String password;
     private String id;  //id is used in transmission rpc, details in https://trac.transmissionbt.com/browser/trunk/extras/rpc-spec.txt
@@ -71,6 +77,7 @@ public class TransmissionClient
 
     public TransmissionClient(String username, String password, String uri)
     {
+        logger.info("new TransmissionClient username:"+username+" password:"+password+" uri:"+uri);
         this.username = username;
         this.password = password;
         this.id = null;
@@ -85,6 +92,7 @@ public class TransmissionClient
 
     private void buildHttpClient()
     {
+        logger.info("build client with X-id "+id);
         Header authHeader = new BasicHeader(HttpHeaders.AUTHORIZATION, String.format("Basic %s", Base64.encodeBase64String((username + ":" + password).getBytes(StandardCharsets.UTF_8))));
         Header idHeader = new BasicHeader("X-Transmission-Session-Id", id);
         List<Header> headers = new ArrayList<>();
@@ -93,8 +101,9 @@ public class TransmissionClient
         httpClient = HttpClients.custom().setDefaultHeaders(headers).build();
     }
 
-    private InputStream execute(String request) throws NetworkException, AuthException
+    private String execute(String request) throws NetworkException, AuthException
     {
+        logger.info("execute request "+request);
         httpPost.setEntity(new StringEntity(request, ContentType.APPLICATION_JSON));
         HttpResponse response;
         try
@@ -102,45 +111,64 @@ public class TransmissionClient
             response = httpClient.execute(httpPost);
         } catch (IOException e)
         {
+            logger.warn("execute "+request+" failed. exception:"+e.getMessage());
             throw new NetworkException(e.getMessage());
         }
 
         int code = response.getStatusLine().getStatusCode();
-        if (code == 200)
+        if (code == HttpStatus.SC_OK)
         {
+            logger.info("execute "+request+" success");
             try
             {
-                return response.getEntity().getContent();
+                String ret = EntityUtils.toString(response.getEntity());
+                logger.info("request "+request+" response "+ret);
+                return ret;
             } catch (IOException e)
             {
-                e.printStackTrace();
+                logger.warn("read response of "+request+" content failed. exception:"+e.getMessage());
                 throw new NetworkException(e.getMessage());
             }
         } else if (code == 409)
         {
+            logger.info("execute "+request+" with result 409, should update x-code");
             id = response.getHeaders("X-Transmission-Session-Id")[0].getValue();
             buildHttpClient();
             return execute(request);
         } else if (code == 401)
         {
+            logger.warn("username or password error");
             throw new AuthException("username or password error");
         }
+        logger.error("execute error with response code "+ code);
         return null;
     }
 
     public boolean torrentStart(List<Integer> ids) throws AuthException, NetworkException
     {
         TransmissionRequest request = new TorrentStartRequest(ids);
-        TransmissionResponse response = null;
-        try
-        {
-            response = mapper.readValue(execute(mapper.writeValueAsString(request)), TransmissionResponse.class);
-        } catch (IOException e)
-        {
+        String requestStr;
+        try {
+            requestStr = mapper.writeValueAsString(request);
+        } catch (JsonProcessingException e) {
+            logger.error("request format error "+request.toString());
             e.printStackTrace();
             return false;
         }
-        return "success".equals(response.getResult());
+
+        String responseStr = execute(requestStr);
+        if(responseStr == null)
+            return false;
+
+        try {
+            TransmissionResponse response = mapper.readValue(responseStr, TransmissionResponse.class);
+            logger.info("start torrent with result of "+response.getResult());
+            return "success".equals(response.getResult());
+        } catch (IOException e) {
+            logger.error("response format error "+responseStr);
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean torrentStop(List<Integer> ids) throws AuthException, NetworkException
