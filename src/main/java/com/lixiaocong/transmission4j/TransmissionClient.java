@@ -33,6 +33,7 @@ package com.lixiaocong.transmission4j;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lixiaocong.transmission4j.exception.AuthException;
+import com.lixiaocong.transmission4j.exception.JsonException;
 import com.lixiaocong.transmission4j.exception.NetworkException;
 import com.lixiaocong.transmission4j.request.TransmissionRequest;
 import com.lixiaocong.transmission4j.request.torrent.accessors.TorrentGetRequest;
@@ -63,6 +64,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Transmission java client
+ */
 public class TransmissionClient
 {
     private static Log logger = LogFactory.getLog(TransmissionClient.class);
@@ -77,7 +81,7 @@ public class TransmissionClient
 
     public TransmissionClient(String username, String password, String uri)
     {
-        logger.info("new TransmissionClient username:"+username+" password:"+password+" uri:"+uri);
+        logger.info("new TransmissionClient username:" + username + " password:" + password + " uri:" + uri);
         this.username = username;
         this.password = password;
         this.id = null;
@@ -92,7 +96,7 @@ public class TransmissionClient
 
     private void buildHttpClient()
     {
-        logger.info("build client with X-id "+id);
+        logger.info("build client with X-id " + id);
         Header authHeader = new BasicHeader(HttpHeaders.AUTHORIZATION, String.format("Basic %s", Base64.encodeBase64String((username + ":" + password).getBytes(StandardCharsets.UTF_8))));
         Header idHeader = new BasicHeader("X-Transmission-Session-Id", id);
         List<Header> headers = new ArrayList<>();
@@ -101,118 +105,95 @@ public class TransmissionClient
         httpClient = HttpClients.custom().setDefaultHeaders(headers).build();
     }
 
-    private String execute(String request) throws NetworkException, AuthException
+    private <T extends TransmissionResponse> T execute(TransmissionRequest request, Class<T> c) throws NetworkException, AuthException, JsonException
     {
-        logger.info("execute request "+request);
-        httpPost.setEntity(new StringEntity(request, ContentType.APPLICATION_JSON));
+        String requestStr;
+        try
+        {
+            requestStr = mapper.writeValueAsString(request);
+        } catch (JsonProcessingException e)
+        {
+            logger.error("write object to json error", e);
+            throw new JsonException(e.toString());
+        }
+
+        logger.info("execute request " + requestStr);
+        httpPost.setEntity(new StringEntity(requestStr, ContentType.APPLICATION_JSON));
         HttpResponse response;
         try
         {
             response = httpClient.execute(httpPost);
         } catch (IOException e)
         {
-            logger.warn("execute "+request+" failed. exception:"+e.getMessage());
-            throw new NetworkException(e.getMessage());
+            logger.warn("execute failed.", e);
+            throw new NetworkException(e.toString());
         }
 
         int code = response.getStatusLine().getStatusCode();
         if (code == HttpStatus.SC_OK)
         {
-            logger.info("execute "+request+" success");
+            String responseStr;
+            logger.info("execute success");
             try
             {
-                String ret = EntityUtils.toString(response.getEntity());
-                logger.info("request "+request+" response "+ret);
-                return ret;
+                responseStr = EntityUtils.toString(response.getEntity());
             } catch (IOException e)
             {
-                logger.warn("read response of "+request+" content failed. exception:"+e.getMessage());
-                throw new NetworkException(e.getMessage());
+                logger.warn("read content of " + requestStr + ". exception:", e);
+                throw new NetworkException(e.toString());
             }
-        } else if (code == 409)
+            logger.info("execute response " + responseStr);
+            try
+            {
+                return mapper.readValue(responseStr, c);
+            } catch (IOException e)
+            {
+                logger.error("read object from json error", e);
+                throw new JsonException(e.toString());
+            }
+        } else if (code == HttpStatus.SC_CONFLICT)
         {
-            logger.info("execute "+request+" with result 409, should update x-code");
+            logger.info("execute response 409");
             id = response.getHeaders("X-Transmission-Session-Id")[0].getValue();
             buildHttpClient();
-            return execute(request);
-        } else if (code == 401)
+            return execute(request, c);
+        } else if (code == HttpStatus.SC_UNAUTHORIZED)
         {
-            logger.warn("username or password error");
-            throw new AuthException("username or password error");
+            logger.info("execute response 401");
+            throw new AuthException("username: " + username + " or password " + password + " incorrect");
         }
-        logger.error("execute error with response code "+ code);
-        return null;
+        logger.error("execute error with response code " + code);
+        throw new NetworkException("execute error with response code " + code);
     }
 
-    public boolean torrentStart(List<Integer> ids) throws AuthException, NetworkException
+    public boolean torrentStart(List<Integer> ids) throws AuthException, NetworkException, JsonException
     {
         TransmissionRequest request = new TorrentStartRequest(ids);
-        String requestStr;
-        try {
-            requestStr = mapper.writeValueAsString(request);
-        } catch (JsonProcessingException e) {
-            logger.error("request format error "+request.toString());
-            e.printStackTrace();
-            return false;
-        }
-
-        String responseStr = execute(requestStr);
-        if(responseStr == null)
-            return false;
-
-        try {
-            TransmissionResponse response = mapper.readValue(responseStr, TransmissionResponse.class);
-            logger.info("start torrent with result of "+response.getResult());
-            return "success".equals(response.getResult());
-        } catch (IOException e) {
-            logger.error("response format error "+responseStr);
-            e.printStackTrace();
-            return false;
-        }
+        TransmissionResponse response = execute(request, TransmissionResponse.class);
+        return response.getResult().equals("success");
     }
 
-    public boolean torrentStop(List<Integer> ids) throws AuthException, NetworkException
+    public boolean torrentStop(List<Integer> ids) throws AuthException, NetworkException, JsonException
     {
+        logger.info("start torrent with ids " + ids);
         TransmissionRequest request = new TorrentStopRequest(ids);
-        TransmissionResponse response = null;
-        try
-        {
-            response = mapper.readValue(execute(mapper.writeValueAsString(request)), TransmissionResponse.class);
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-            return false;
-        }
-        return "success".equals(response.getResult());
+        TransmissionResponse response = execute(request, TransmissionResponse.class);
+        return response.getResult().equals("success");
     }
 
-    public boolean torrentAdd(String metainfo) throws AuthException, NetworkException
+    public boolean torrentAdd(String metainfo) throws AuthException, NetworkException, JsonException
     {
+        logger.info("add torrent with metainfo " + metainfo);
         TransmissionRequest request = new TorrentAddRequest(metainfo);
-        TransmissionResponse response = null;
-        try
-        {
-            response = mapper.readValue(execute(mapper.writeValueAsString(request)), TransmissionResponse.class);
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-            return false;
-        }
-        return "success".equals(response.getResult());
+        TransmissionResponse response = execute(request, TransmissionResponse.class);
+        return response.getResult().equals("success");
     }
 
-    public List<Torrent> torrentGet(List<Integer> ids) throws AuthException, NetworkException
+    public List<Torrent> torrentGet(List<Integer> ids) throws AuthException, NetworkException, JsonException
     {
+        logger.info("get torrent with ids " + ids);
         TransmissionRequest request = new TorrentGetRequest(ids);
-        TorrentGetResponse response = null;
-        try
-        {
-            response = mapper.readValue(execute(mapper.writeValueAsString(request)), TorrentGetResponse.class);
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-            return null;
-        }
+        TorrentGetResponse response = execute(request, TorrentGetResponse.class);
         return response.getArguments().getTorrents();
     }
 }

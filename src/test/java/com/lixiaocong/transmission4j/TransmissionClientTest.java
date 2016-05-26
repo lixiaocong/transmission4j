@@ -31,6 +31,7 @@
 package com.lixiaocong.transmission4j;
 
 import com.lixiaocong.transmission4j.exception.AuthException;
+import com.lixiaocong.transmission4j.exception.JsonException;
 import com.lixiaocong.transmission4j.exception.NetworkException;
 import com.lixiaocong.transmission4j.response.torrent.accessors.Torrent;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
@@ -53,23 +54,23 @@ public class TransmissionClientTest
     @Before
     public void before() throws MalformedURLException
     {
-        client = new TransmissionClient("admin", "admin", "http://192.168.1.41:9091/transmission/rpc");
+        client = new TransmissionClient("admin", "admin", "http://127.0.0.1:9091/transmission/rpc");
     }
 
     @Test
-    public void testTorrentStart() throws IOException, AuthException, NetworkException
+    public void testTorrentStart() throws AuthException, NetworkException, JsonException
     {
         assertTrue(client.torrentStart(null));
     }
 
     @Test
-    public void testTorrentStop() throws IOException, AuthException, NetworkException
+    public void testTorrentStop() throws AuthException, NetworkException, JsonException
     {
         assertTrue(client.torrentStop(null));
     }
 
     @Test
-    public void testTorrentAdd() throws IOException, AuthException, NetworkException
+    public void testTorrentAdd() throws AuthException, NetworkException, IOException, JsonException
     {
         File file = new File("/Users/lixiaocong/Downloads/test.torrent");
         InputStream in = new FileInputStream(file);
@@ -82,10 +83,10 @@ public class TransmissionClientTest
         assertTrue(client.torrentAdd(str));
     }
     @Test
-    public void testTorrentGetTest() throws IOException, AuthException, NetworkException
+    public void testTorrentGetTest() throws IOException, AuthException, NetworkException, JsonException
     {
         List<Torrent> list = client.torrentGet(null);
         for (Torrent torrent : list)
-            System.out.println(torrent);
+            System.out.println(torrent.getName());
     }
 }
