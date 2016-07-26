@@ -36,11 +36,14 @@ import com.lixiaocong.transmission4j.exception.AuthException;
 import com.lixiaocong.transmission4j.exception.JsonException;
 import com.lixiaocong.transmission4j.exception.NetworkException;
 import com.lixiaocong.transmission4j.request.TransmissionRequest;
+import com.lixiaocong.transmission4j.request.session.stats.SessionStatsRequest;
 import com.lixiaocong.transmission4j.request.torrent.accessors.TorrentGetRequest;
 import com.lixiaocong.transmission4j.request.torrent.action.TorrentStartRequest;
 import com.lixiaocong.transmission4j.request.torrent.action.TorrentStopRequest;
 import com.lixiaocong.transmission4j.request.torrent.add.TorrentAddRequest;
+import com.lixiaocong.transmission4j.request.torrent.remove.TorrentRemoveRequest;
 import com.lixiaocong.transmission4j.response.TransmissionResponse;
+import com.lixiaocong.transmission4j.response.session.stats.SessionStatsResponse;
 import com.lixiaocong.transmission4j.response.torrent.accessors.Torrent;
 import com.lixiaocong.transmission4j.response.torrent.accessors.TorrentGetResponse;
 import org.apache.commons.codec.binary.Base64;
@@ -189,11 +192,26 @@ public class TransmissionClient
         return response.getResult().equals("success");
     }
 
+    public boolean torrentRemove(List<Integer> ids, boolean deleteFiles) throws AuthException, NetworkException, JsonException
+    {
+        logger.info("remove torrent with ids " + ids);
+        TransmissionRequest request = new TorrentRemoveRequest(ids, deleteFiles);
+        TransmissionResponse response = execute(request, TransmissionResponse.class);
+        return response.getResult().equals("success");
+    }
+
     public List<Torrent> torrentGet(List<Integer> ids) throws AuthException, NetworkException, JsonException
     {
         logger.info("get torrent with ids " + ids);
         TransmissionRequest request = new TorrentGetRequest(ids);
         TorrentGetResponse response = execute(request, TorrentGetResponse.class);
         return response.getArguments().getTorrents();
+    }
+
+    public SessionStatsResponse sessionStats() throws AuthException, NetworkException, JsonException
+    {
+        logger.info("get session stats");
+        TransmissionRequest request = new SessionStatsRequest();
+        return execute(request, SessionStatsResponse.class);
     }
 }

@@ -45,6 +45,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.List;
 
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
 public class TransmissionClientTest
@@ -82,11 +83,32 @@ public class TransmissionClientTest
 
         assertTrue(client.torrentAdd(str));
     }
+
     @Test
-    public void testTorrentGetTest() throws IOException, AuthException, NetworkException, JsonException
+    public void testTorrentRemove() throws IOException, AuthException, NetworkException, JsonException
+    {
+        assertTrue(client.torrentRemove(null, true));
+        try
+        {
+            Thread.sleep(1000);
+        } catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+        assertEquals(0, client.torrentGet(null).size());
+    }
+
+    @Test
+    public void testTorrentGet() throws IOException, AuthException, NetworkException, JsonException
     {
         List<Torrent> list = client.torrentGet(null);
         for (Torrent torrent : list)
             System.out.println(torrent.getName());
+    }
+
+    @Test
+    public void testSessionStats() throws IOException, AuthException, NetworkException, JsonException
+    {
+        System.out.println(client.sessionStats());
     }
 }

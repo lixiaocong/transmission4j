@@ -1,9 +1,8 @@
-group 'lixiaocong.com'
-version '0.1'
+group 'com.lixiaocong'
+version '0.2'
 
 apply plugin: 'java'
-
-sourceCompatibility = 1.7
+apply plugin: 'idea'
 
 repositories {
     mavenCentral()

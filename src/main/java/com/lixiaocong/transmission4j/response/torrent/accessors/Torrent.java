@@ -291,34 +291,4 @@ public class Torrent
     {
         this.status = status;
     }
-
-    @Override
-    public String toString()
-    {
-        return "Torrent{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", finished=" + finished +
-                ", downloadDir='" + downloadDir + '\'' +
-                ", activityDate=" + activityDate +
-                ", addedDate=" + addedDate +
-                ", doneDate=" + doneDate +
-                ", dateCreated=" + dateCreated +
-                ", bandwidthPriority=" + bandwidthPriority +
-                ", creator='" + creator + '\'' +
-                ", desiredAvailable=" + desiredAvailable +
-                ", files=" + files +
-                ", stalled=" + stalled +
-                ", magnetLink='" + magnetLink + '\'' +
-                ", rateDownload=" + rateDownload +
-                ", rateUpload=" + rateUpload +
-                ", secondsDownloading=" + secondsDownloading +
-                ", secondsSeeding=" + secondsSeeding +
-                ", totalSize=" + totalSize +
-                ", uploadRatio=" + uploadRatio +
-                ", downloadedEver=" + downloadedEver +
-                ", percentDone=" + percentDone +
-                ", status=" + status +
-                '}';
-    }
 }
