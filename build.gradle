@@ -1,8 +1,11 @@
 group 'com.lixiaocong'
-version '0.2'
+version '0.3'
 
 apply plugin: 'java'
 apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -10,8 +13,8 @@ repositories {
 
 dependencies {
     compile(
-            'com.fasterxml.jackson.core:jackson-databind:2.7.2',
-            'org.apache.httpcomponents:httpclient:4.5.2',
+            'com.fasterxml.jackson.core:jackson-databind:2.8.7',
+            'org.apache.httpcomponents:httpclient:4.5.3',
             'commons-logging:commons-logging:1.2'
     )
     testCompile 'junit:junit:4.12'

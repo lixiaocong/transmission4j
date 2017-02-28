@@ -46,7 +46,6 @@ import com.lixiaocong.transmission4j.response.TransmissionResponse;
 import com.lixiaocong.transmission4j.response.session.stats.SessionStatsResponse;
 import com.lixiaocong.transmission4j.response.torrent.accessors.Torrent;
 import com.lixiaocong.transmission4j.response.torrent.accessors.TorrentGetResponse;
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -65,6 +64,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -100,7 +100,7 @@ public class TransmissionClient
     private void buildHttpClient()
     {
         logger.info("build client with X-id " + id);
-        Header authHeader = new BasicHeader(HttpHeaders.AUTHORIZATION, String.format("Basic %s", Base64.encode((username + ":" + password).getBytes(StandardCharsets.UTF_8))));
+        Header authHeader = new BasicHeader(HttpHeaders.AUTHORIZATION, String.format("Basic %s", Base64.getEncoder().encodeToString((username + ":" + password).getBytes(StandardCharsets.UTF_8))));
         Header idHeader = new BasicHeader("X-Transmission-Session-Id", id);
         List<Header> headers = new ArrayList<>();
         headers.add(authHeader);
