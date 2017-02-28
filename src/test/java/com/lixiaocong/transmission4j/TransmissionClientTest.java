@@ -48,31 +48,51 @@ import java.util.List;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
-public class TransmissionClientTest
-{
+public class TransmissionClientTest {
     private TransmissionClient client;
 
     @Before
-    public void before() throws MalformedURLException
-    {
+    public void before() throws MalformedURLException {
         client = new TransmissionClient("admin", "admin", "http://127.0.0.1:9091/transmission/rpc");
     }
 
     @Test
-    public void testTorrentStart() throws AuthException, NetworkException, JsonException
-    {
+    public void testAuthError() {
+        client = new TransmissionClient("admin", "error", "http://127.0.0.1:9091/transmission/rpc");
+        Exception exception = null;
+        try {
+            client.torrentGet(null);
+        } catch (AuthException | NetworkException e) {
+            exception = e;
+        }
+        assert (exception instanceof AuthException);
+    }
+
+    @Test
+    public void testNetworkError() {
+        client = new TransmissionClient("admin", "admin", "http://127.0.0.1/transmission/rpc");
+        Exception exception = null;
+        try {
+            client.torrentGet(null);
+        } catch (AuthException | NetworkException e) {
+            exception = e;
+        }
+        assert (exception instanceof NetworkException);
+    }
+
+
+    @Test
+    public void testTorrentStart() throws AuthException, NetworkException, JsonException {
         assertTrue(client.torrentStart(null));
     }
 
     @Test
-    public void testTorrentStop() throws AuthException, NetworkException, JsonException
-    {
+    public void testTorrentStop() throws AuthException, NetworkException, JsonException {
         assertTrue(client.torrentStop(null));
     }
 
     @Test
-    public void testTorrentAdd() throws AuthException, NetworkException, IOException, JsonException
-    {
+    public void testTorrentAdd() throws AuthException, NetworkException, IOException, JsonException {
         File file = new File("/Users/lixiaocong/Downloads/test.torrent");
         InputStream in = new FileInputStream(file);
         int len = in.available();
@@ -85,30 +105,25 @@ public class TransmissionClientTest
     }
 
     @Test
-    public void testTorrentRemove() throws IOException, AuthException, NetworkException, JsonException
-    {
+    public void testTorrentRemove() throws IOException, AuthException, NetworkException, JsonException {
         assertTrue(client.torrentRemove(null, true));
-        try
-        {
+        try {
             Thread.sleep(1000);
-        } catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
         assertEquals(0, client.torrentGet(null).size());
     }
 
     @Test
-    public void testTorrentGet() throws IOException, AuthException, NetworkException, JsonException
-    {
+    public void testTorrentGet() throws IOException, AuthException, NetworkException, JsonException {
         List<Torrent> list = client.torrentGet(null);
         for (Torrent torrent : list)
             System.out.println(torrent.getName());
     }
 
     @Test
-    public void testSessionStats() throws IOException, AuthException, NetworkException, JsonException
-    {
+    public void testSessionStats() throws IOException, AuthException, NetworkException, JsonException {
         System.out.println(client.sessionStats());
     }
 }
