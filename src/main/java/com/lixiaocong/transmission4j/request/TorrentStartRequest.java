@@ -30,22 +30,15 @@
 
 package com.lixiaocong.transmission4j.request;
 
-public class TorrentAddArguments
+import java.util.List;
+
+public class TorrentStartRequest extends TransmissionRequest
 {
-    private String metainfo;
-
-    public TorrentAddArguments(String metainfo)
+    TorrentStartRequest(List<Integer> ids)
     {
-        this.metainfo = metainfo;
-    }
-
-    public String getMetainfo()
-    {
-        return metainfo;
-    }
-
-    public void setMetainfo(String metainfo)
-    {
-        this.metainfo = metainfo;
+        super(TransmissionRequestMethod.TORRENT_START);
+        if(ids!=null)
+            arguments.put("ids",ids);
     }
 }
+

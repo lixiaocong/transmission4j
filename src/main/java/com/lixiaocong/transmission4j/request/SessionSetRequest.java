@@ -30,33 +30,12 @@
 
 package com.lixiaocong.transmission4j.request;
 
-import com.lixiaocong.transmission4j.request.TransmissionRequest;
-
-import java.util.HashMap;
-import java.util.Map;
-
 public class SessionSetRequest extends TransmissionRequest
 {
-    private Map<String, Object> arguments;
-
     public SessionSetRequest()
     {
-        super("session-set");
-        this.arguments = new HashMap<>();
+        super(TransmissionRequestMethod.SESSION_SET);
     }
-
-    public Map<String, Object> getArguments()
-    {
-        return arguments;
-    }
-
-    public void setArguments(Map<String, Object> arguments)
-    {
-        this.arguments = arguments;
-    }
-
-
-    //set the arguments
 
     public void setAltSpeedDown(long speed)
     {

@@ -30,23 +30,14 @@
 
 package com.lixiaocong.transmission4j.request;
 
-public class TorrentAddRequest extends TransmissionRequest
-{
-    private TorrentAddArguments arguments;
+public class TorrentAddRequest extends TransmissionRequest {
 
-    public TorrentAddRequest(String metainfo)
-    {
-        super("torrent-add");
-        this.arguments = new TorrentAddArguments(metainfo);
+    public TorrentAddRequest(String metainfo) {
+        super(TransmissionRequestMethod.TORRENT_ADD);
+        arguments.put("metainfo", metainfo);
     }
 
-    public TorrentAddArguments getArguments()
-    {
-        return arguments;
-    }
-
-    public void setArguments(TorrentAddArguments arguments)
-    {
-        this.arguments = arguments;
+    public void setPausedOnAdd() {
+        arguments.put("paused", true);
     }
 }

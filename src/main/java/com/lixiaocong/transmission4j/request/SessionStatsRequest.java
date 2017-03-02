@@ -30,12 +30,10 @@
 
 package com.lixiaocong.transmission4j.request;
 
-import com.lixiaocong.transmission4j.request.TransmissionRequest;
-
 public class SessionStatsRequest extends TransmissionRequest
 {
     public SessionStatsRequest()
     {
-        super("session-stats");
+        super(TransmissionRequestMethod.SESSION_STATS);
     }
 }

@@ -34,10 +34,10 @@ import com.lixiaocong.transmission4j.exception.AuthException;
 import com.lixiaocong.transmission4j.exception.JsonException;
 import com.lixiaocong.transmission4j.exception.NetworkException;
 import com.lixiaocong.transmission4j.request.*;
-import com.lixiaocong.transmission4j.response.TransmissionResponse;
 import com.lixiaocong.transmission4j.response.SessionStatsResponse;
 import com.lixiaocong.transmission4j.response.Torrent;
 import com.lixiaocong.transmission4j.response.TorrentGetResponse;
+import com.lixiaocong.transmission4j.response.TransmissionResponse;
 import com.lixiaocong.transmission4j.utils.JsonUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,8 +63,7 @@ import java.util.List;
 /**
  * Transmission java client
  */
-public class TransmissionClient
-{
+public class TransmissionClient {
     private static Log log = LogFactory.getLog(TransmissionClient.class.getName());
 
     private String username;
@@ -74,8 +73,7 @@ public class TransmissionClient
     private HttpClient httpClient;
     private HttpPost httpPost;
 
-    public TransmissionClient(String username, String password, String uri)
-    {
+    public TransmissionClient(String username, String password, String uri) {
         log.info("new TransmissionClient username:" + username + " password:" + password + " uri:" + uri);
         this.username = username;
         this.password = password;
@@ -88,8 +86,7 @@ public class TransmissionClient
         httpPost.setConfig(config);
     }
 
-    private void buildHttpClient()
-    {
+    private void buildHttpClient() {
         log.info("build client with X-Transmission-Session-Id:" + id);
         Header authHeader = new BasicHeader(HttpHeaders.AUTHORIZATION, String.format("Basic %s", Base64.getEncoder().encodeToString((username + ":" + password).getBytes(StandardCharsets.UTF_8))));
         Header idHeader = new BasicHeader("X-Transmission-Session-Id", id);
@@ -100,16 +97,14 @@ public class TransmissionClient
     }
 
     /**
-     *
      * @param request
      * @param responseClass
      * @param <T>
      * @return
      * @throws NetworkException when there is an error connecting to transmission server
-     * @throws AuthException username or password in correct
+     * @throws AuthException    username or password in correct
      */
-    private <T extends TransmissionResponse> T execute(TransmissionRequest request, Class<T> responseClass) throws NetworkException, AuthException
-    {
+    private <T extends TransmissionResponse> T execute(TransmissionRequest request, Class<T> responseClass) throws NetworkException, AuthException {
         String requestStr;
         try {
             requestStr = JsonUtil.getJson(request);
@@ -121,47 +116,38 @@ public class TransmissionClient
         log.info("execute request " + requestStr);
         httpPost.setEntity(new StringEntity(requestStr, ContentType.APPLICATION_JSON));
         HttpResponse response;
-        try
-        {
+        try {
             response = httpClient.execute(httpPost);
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             log.error(e);
             throw new NetworkException(e.getMessage());
         }
 
         int code = response.getStatusLine().getStatusCode();
-        if (code == HttpStatus.SC_OK)
-        {
+        if (code == HttpStatus.SC_OK) {
             String responseStr;
-            log.info("execute success");
-            try
-            {
+            try {
                 responseStr = EntityUtils.toString(response.getEntity());
-            } catch (IOException e)
-            {
+            } catch (IOException e) {
                 log.warn("read content of " + requestStr + ". exception:", e);
                 throw new NetworkException(e.getMessage());
             }
             log.info("execute response " + responseStr);
-            try
-            {
+            try {
                 return JsonUtil.getObject(responseClass, responseStr);
             } catch (JsonException e) {
                 log.error(e);
                 throw new RuntimeException(e.getMessage());
             }
-        } else if (code == HttpStatus.SC_CONFLICT)
-        {
+        } else if (code == HttpStatus.SC_CONFLICT) {
             log.info("execute response 409");
             Header[] headers = response.getHeaders("X-Transmission-Session-Id");
-            if(headers.length==0)
+            if (headers.length == 0)
                 throw new RuntimeException("transmission return 409 without id");
             id = headers[0].getValue();
             buildHttpClient();
             return execute(request, responseClass);
-        } else if (code == HttpStatus.SC_UNAUTHORIZED)
-        {
+        } else if (code == HttpStatus.SC_UNAUTHORIZED) {
             log.info("execute response 401");
             throw new AuthException("username: " + username + " or password " + password + " incorrect");
         }
@@ -169,48 +155,61 @@ public class TransmissionClient
         throw new NetworkException("execute error with response code " + code);
     }
 
-    public boolean torrentStart(List<Integer> ids) throws AuthException, NetworkException
-    {
+    public boolean startAll() throws AuthException, NetworkException {
+        TorrentStartRequest startAllReuqest = TransmissionRequestFactory.getStartAllReuqest();
+        TransmissionResponse response = execute(startAllReuqest, TransmissionResponse.class);
+        return response.getResult().equals("success");
+    }
+
+    public boolean start(List<Integer> ids) throws AuthException, NetworkException {
         TransmissionRequest request = TransmissionRequestFactory.getStartRequest(ids);
         TransmissionResponse response = execute(request, TransmissionResponse.class);
         return response.getResult().equals("success");
     }
 
-    public boolean torrentStop(List<Integer> ids) throws AuthException, NetworkException
-    {
-        log.info("start torrent with ids " + ids);
+    public boolean stopAll() throws AuthException, NetworkException {
+        TorrentStopRequest stopAllRequest = TransmissionRequestFactory.getStopAllRequest();
+        TransmissionResponse response = execute(stopAllRequest, TransmissionResponse.class);
+        return response.getResult().equals("success");
+    }
+
+    public boolean stop(List<Integer> ids) throws AuthException, NetworkException {
         TransmissionRequest request = TransmissionRequestFactory.getStopRequest(ids);
         TransmissionResponse response = execute(request, TransmissionResponse.class);
         return response.getResult().equals("success");
     }
 
-    public boolean torrentAdd(String metainfo) throws AuthException, NetworkException
-    {
-        log.info("add torrent with metainfo " + metainfo);
-        TransmissionRequest request = new TorrentAddRequest(metainfo);
+    public boolean add(String metainfo) throws AuthException, NetworkException {
+        TransmissionRequest request = TransmissionRequestFactory.getAddRequest(metainfo);
         TransmissionResponse response = execute(request, TransmissionResponse.class);
         return response.getResult().equals("success");
     }
 
-    public boolean torrentRemove(List<Integer> ids, boolean deleteFiles) throws AuthException, NetworkException
-    {
-        log.info("remove torrent with ids " + ids);
-        TransmissionRequest request = new TorrentRemoveRequest(ids, deleteFiles);
+    public boolean removeAll() throws AuthException, NetworkException {
+        TransmissionRequest request = TransmissionRequestFactory.getRemoveAllRequest();
         TransmissionResponse response = execute(request, TransmissionResponse.class);
         return response.getResult().equals("success");
     }
 
-    public List<Torrent> torrentGet(List<Integer> ids) throws AuthException, NetworkException
-    {
-        log.info("get torrent with ids " + ids);
-        TransmissionRequest request = new TorrentGetRequest(ids);
+    public boolean remove(List<Integer> ids) throws AuthException, NetworkException {
+        TransmissionRequest request = TransmissionRequestFactory.getRemoveRequest(ids);
+        TransmissionResponse response = execute(request, TransmissionResponse.class);
+        return response.getResult().equals("success");
+    }
+
+    public List<Torrent> getAll() throws AuthException, NetworkException {
+        TransmissionRequest request = TransmissionRequestFactory.getgetAllRequest();
         TorrentGetResponse response = execute(request, TorrentGetResponse.class);
         return response.getArguments().getTorrents();
     }
 
-    public SessionStatsResponse sessionStats() throws AuthException, NetworkException
-    {
-        log.info("get session stats");
+    public List<Torrent> get(List<Integer> ids) throws AuthException, NetworkException {
+        TransmissionRequest request = TransmissionRequestFactory.getGetRequest(ids);
+        TorrentGetResponse response = execute(request, TorrentGetResponse.class);
+        return response.getArguments().getTorrents();
+    }
+
+    public SessionStatsResponse sessionStats() throws AuthException, NetworkException {
         TransmissionRequest request = new SessionStatsRequest();
         return execute(request, SessionStatsResponse.class);
     }

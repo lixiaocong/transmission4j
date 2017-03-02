@@ -32,23 +32,13 @@ package com.lixiaocong.transmission4j.request;
 
 import java.util.List;
 
-public class TorrentRemoveRequest extends TransmissionRequest
-{
-    private TorrentRemoveArguments arguments;
+public class TorrentRemoveRequest extends TransmissionRequest {
 
-    public TorrentRemoveRequest(List<Integer> ids, boolean deleteLocalData)
-    {
-        super("torrent-remove");
-        this.arguments = new TorrentRemoveArguments(ids, deleteLocalData);
-    }
-
-    public TorrentRemoveArguments getArguments()
-    {
-        return arguments;
-    }
-
-    public void setArguments(TorrentRemoveArguments arguments)
-    {
-        this.arguments = arguments;
+    public TorrentRemoveRequest(List<Integer> ids, boolean deleteLocalData) {
+        super(TransmissionRequestMethod.TORRENT_REMOVE);
+        if (ids != null)
+            arguments.put("ids", ids);
+        if (deleteLocalData)
+            arguments.put("delete-local-data", true);
     }
 }

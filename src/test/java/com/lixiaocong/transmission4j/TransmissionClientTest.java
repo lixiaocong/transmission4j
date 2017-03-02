@@ -61,7 +61,7 @@ public class TransmissionClientTest {
         client = new TransmissionClient("admin", "error", "http://127.0.0.1:9091/transmission/rpc");
         Exception exception = null;
         try {
-            client.torrentGet(null);
+            client.getAll();
         } catch (AuthException | NetworkException e) {
             exception = e;
         }
@@ -73,7 +73,7 @@ public class TransmissionClientTest {
         client = new TransmissionClient("admin", "admin", "http://127.0.0.1/transmission/rpc");
         Exception exception = null;
         try {
-            client.torrentGet(null);
+            client.getAll();
         } catch (AuthException | NetworkException e) {
             exception = e;
         }
@@ -83,12 +83,12 @@ public class TransmissionClientTest {
 
     @Test
     public void testTorrentStart() throws AuthException, NetworkException, JsonException {
-        assertTrue(client.torrentStart(null));
+        assertTrue(client.startAll());
     }
 
     @Test
     public void testTorrentStop() throws AuthException, NetworkException, JsonException {
-        assertTrue(client.torrentStop(null));
+        assertTrue(client.stopAll());
     }
 
     @Test
@@ -100,24 +100,23 @@ public class TransmissionClientTest {
         in.read(data, 0, len);
         String str = Base64.encode(data);
         in.close();
-
-        assertTrue(client.torrentAdd(str));
+        assertTrue(client.add(str));
     }
 
     @Test
     public void testTorrentRemove() throws IOException, AuthException, NetworkException, JsonException {
-        assertTrue(client.torrentRemove(null, true));
+        assertTrue(client.removeAll());
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assertEquals(0, client.torrentGet(null).size());
+        assertEquals(0, client.getAll().size());
     }
 
     @Test
     public void testTorrentGet() throws IOException, AuthException, NetworkException, JsonException {
-        List<Torrent> list = client.torrentGet(null);
+        List<Torrent> list = client.getAll();
         for (Torrent torrent : list)
             System.out.println(torrent.getName());
     }
