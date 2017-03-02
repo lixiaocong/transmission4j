@@ -30,9 +30,12 @@
 
 package com.lixiaocong.transmission4j.request.torrent.action;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lixiaocong.transmission4j.exception.JsonException;
 import com.lixiaocong.transmission4j.request.TransmissionRequest;
+import com.lixiaocong.transmission4j.request.TransmissionRequestFactory;
+import com.lixiaocong.transmission4j.utils.JsonUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import java.util.LinkedList;
@@ -40,36 +43,23 @@ import java.util.List;
 
 public class TorrentActionRequestTest
 {
+    private Log log = LogFactory.getLog(getClass().getName());
+
     @Test
-    public void testTorrentActionRequest()
-    {
+    public void testTorrentActionRequest() throws JsonException {
         List<Integer> ids = new LinkedList<>();
         ids.add(1);
         ids.add(2);
         ids.add(3);
 
-        TransmissionRequest startRequest = new TorrentStartRequest(ids);
-        TransmissionRequest stopRequest = new TorrentStopRequest(ids);
+        TransmissionRequest startRequest = TransmissionRequestFactory.getStartRequest(ids);
+        TransmissionRequest stopRequest = TransmissionRequestFactory.getStopRequest(ids);
+        TransmissionRequest startRequestWithNoId = TransmissionRequestFactory.getStartRequest(null);
+        TransmissionRequest stopRequestWithNoId = TransmissionRequestFactory.getStopRequest(null);
 
-        ObjectMapper mapper = new ObjectMapper();
-        try
-        {
-            System.out.println(mapper.writeValueAsString(startRequest));
-            System.out.println(mapper.writeValueAsString(stopRequest));
-        } catch (JsonProcessingException e)
-        {
-            e.printStackTrace();
-        }
-
-        TransmissionRequest startRequestWithNoId = new TorrentStartRequest(null);
-        TransmissionRequest stopRequestWithNoId = new TorrentStopRequest(null);
-        try
-        {
-            System.out.println(mapper.writeValueAsString(startRequestWithNoId));
-            System.out.println(mapper.writeValueAsString(stopRequestWithNoId));
-        } catch (JsonProcessingException e)
-        {
-            e.printStackTrace();
-        }
+        log.info(JsonUtil.getJson(startRequest));
+        log.info(JsonUtil.getJson(stopRequest));
+        log.info(JsonUtil.getJson(startRequestWithNoId));
+        log.info(JsonUtil.getJson(stopRequestWithNoId));
     }
 }

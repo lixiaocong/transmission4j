@@ -28,16 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j.request.torrent.action;
 
-import java.util.List;
+package com.lixiaocong.transmission4j.request;
 
-public class TorrentStopRequest extends TorrentActionRequest
-{
-    public TorrentStopRequest(List<Integer> ids)
-    {
-        super("torrent-stop", ids);
-    }
+public class TransmissionRequestMethod {
+    public static final String TORRENT_START = "torrent-start";
+    public static final String TORRENT_STOP = "torrent-stop";
 }
-
-

@@ -33,7 +33,7 @@ package com.lixiaocong.transmission4j;
 import com.lixiaocong.transmission4j.exception.AuthException;
 import com.lixiaocong.transmission4j.exception.JsonException;
 import com.lixiaocong.transmission4j.exception.NetworkException;
-import com.lixiaocong.transmission4j.response.torrent.accessors.Torrent;
+import com.lixiaocong.transmission4j.response.Torrent;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 import org.junit.Before;
 import org.junit.Test;

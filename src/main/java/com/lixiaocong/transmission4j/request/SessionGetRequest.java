@@ -28,29 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j.request.torrent.remove;
+package com.lixiaocong.transmission4j.request;
 
 import com.lixiaocong.transmission4j.request.TransmissionRequest;
 
-import java.util.List;
-
-public class TorrentRemoveRequest extends TransmissionRequest
+public class SessionGetRequest extends TransmissionRequest
 {
-    private TorrentRemoveArguments arguments;
-
-    public TorrentRemoveRequest(List<Integer> ids, boolean deleteLocalData)
+    public SessionGetRequest()
     {
-        super("torrent-remove");
-        this.arguments = new TorrentRemoveArguments(ids, deleteLocalData);
-    }
-
-    public TorrentRemoveArguments getArguments()
-    {
-        return arguments;
-    }
-
-    public void setArguments(TorrentRemoveArguments arguments)
-    {
-        this.arguments = arguments;
+        super("session-get");
     }
 }

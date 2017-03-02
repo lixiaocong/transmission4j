@@ -33,17 +33,11 @@ package com.lixiaocong.transmission4j;
 import com.lixiaocong.transmission4j.exception.AuthException;
 import com.lixiaocong.transmission4j.exception.JsonException;
 import com.lixiaocong.transmission4j.exception.NetworkException;
-import com.lixiaocong.transmission4j.request.TransmissionRequest;
-import com.lixiaocong.transmission4j.request.session.stats.SessionStatsRequest;
-import com.lixiaocong.transmission4j.request.torrent.accessors.TorrentGetRequest;
-import com.lixiaocong.transmission4j.request.torrent.action.TorrentStartRequest;
-import com.lixiaocong.transmission4j.request.torrent.action.TorrentStopRequest;
-import com.lixiaocong.transmission4j.request.torrent.add.TorrentAddRequest;
-import com.lixiaocong.transmission4j.request.torrent.remove.TorrentRemoveRequest;
+import com.lixiaocong.transmission4j.request.*;
 import com.lixiaocong.transmission4j.response.TransmissionResponse;
-import com.lixiaocong.transmission4j.response.session.stats.SessionStatsResponse;
-import com.lixiaocong.transmission4j.response.torrent.accessors.Torrent;
-import com.lixiaocong.transmission4j.response.torrent.accessors.TorrentGetResponse;
+import com.lixiaocong.transmission4j.response.SessionStatsResponse;
+import com.lixiaocong.transmission4j.response.Torrent;
+import com.lixiaocong.transmission4j.response.TorrentGetResponse;
 import com.lixiaocong.transmission4j.utils.JsonUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -152,7 +146,7 @@ public class TransmissionClient
             log.info("execute response " + responseStr);
             try
             {
-                return JsonUtil.getObject(responseClass,requestStr);
+                return JsonUtil.getObject(responseClass, responseStr);
             } catch (JsonException e) {
                 log.error(e);
                 throw new RuntimeException(e.getMessage());
@@ -177,7 +171,7 @@ public class TransmissionClient
 
     public boolean torrentStart(List<Integer> ids) throws AuthException, NetworkException
     {
-        TransmissionRequest request = new TorrentStartRequest(ids);
+        TransmissionRequest request = TransmissionRequestFactory.getStartRequest(ids);
         TransmissionResponse response = execute(request, TransmissionResponse.class);
         return response.getResult().equals("success");
     }
@@ -185,7 +179,7 @@ public class TransmissionClient
     public boolean torrentStop(List<Integer> ids) throws AuthException, NetworkException
     {
         log.info("start torrent with ids " + ids);
-        TransmissionRequest request = new TorrentStopRequest(ids);
+        TransmissionRequest request = TransmissionRequestFactory.getStopRequest(ids);
         TransmissionResponse response = execute(request, TransmissionResponse.class);
         return response.getResult().equals("success");
     }

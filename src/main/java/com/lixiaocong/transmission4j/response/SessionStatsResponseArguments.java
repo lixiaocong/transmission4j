@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j.response.session.stats;
+package com.lixiaocong.transmission4j.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

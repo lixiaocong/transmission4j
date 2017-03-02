@@ -32,6 +32,7 @@ package com.lixiaocong.transmission4j.request.torrent.accessors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lixiaocong.transmission4j.request.TorrentGetRequest;
 import org.junit.Test;
 
 import java.util.LinkedList;

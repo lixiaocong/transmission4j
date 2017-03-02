@@ -28,63 +28,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j.response.session.stats;
+package com.lixiaocong.transmission4j.request;
 
-public class SessionStats
+public class TorrentAddRequest extends TransmissionRequest
 {
-    private long uploadedBytes;
-    private long downloadedBytes;
-    private long filesAdded;
-    private long sessionCount;
-    private long secondsActive;
+    private TorrentAddArguments arguments;
 
-    public long getUploadedBytes()
+    public TorrentAddRequest(String metainfo)
     {
-        return uploadedBytes;
+        super("torrent-add");
+        this.arguments = new TorrentAddArguments(metainfo);
     }
 
-    public void setUploadedBytes(long uploadedBytes)
+    public TorrentAddArguments getArguments()
     {
-        this.uploadedBytes = uploadedBytes;
+        return arguments;
     }
 
-    public long getDownloadedBytes()
+    public void setArguments(TorrentAddArguments arguments)
     {
-        return downloadedBytes;
-    }
-
-    public void setDownloadedBytes(long downloadedBytes)
-    {
-        this.downloadedBytes = downloadedBytes;
-    }
-
-    public long getFilesAdded()
-    {
-        return filesAdded;
-    }
-
-    public void setFilesAdded(long filesAdded)
-    {
-        this.filesAdded = filesAdded;
-    }
-
-    public long getSessionCount()
-    {
-        return sessionCount;
-    }
-
-    public void setSessionCount(long sessionCount)
-    {
-        this.sessionCount = sessionCount;
-    }
-
-    public long getSecondsActive()
-    {
-        return secondsActive;
-    }
-
-    public void setSecondsActive(long secondsActive)
-    {
-        this.secondsActive = secondsActive;
+        this.arguments = arguments;
     }
 }

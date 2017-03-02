@@ -28,9 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j.response.torrent.accessors;
-
-import com.lixiaocong.transmission4j.response.TransmissionResponse;
+package com.lixiaocong.transmission4j.response;
 
 public class TorrentGetResponse extends TransmissionResponse
 {

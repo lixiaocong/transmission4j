@@ -28,28 +28,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j.request.torrent.accessors;
+package com.lixiaocong.transmission4j.utils;
 
-import com.lixiaocong.transmission4j.request.TransmissionRequest;
+import com.lixiaocong.transmission4j.response.TransmissionResponse;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
-import java.util.List;
+public class JsonUtilTest {
 
-public class TorrentGetRequest extends TransmissionRequest
-{
-    private TorrentGetRequestArguments arguments;
+    private Log log = LogFactory.getLog(getClass().getName());
 
-    public TorrentGetRequest(List<Integer> ids) {
-        super("torrent-get");
-        this.arguments = new TorrentGetRequestArguments(ids);
-    }
-
-    public TorrentGetRequestArguments getArguments()
-    {
-        return arguments;
-    }
-
-    public void setArguments(TorrentGetRequestArguments arguments)
-    {
-        this.arguments = arguments;
+    @Test
+    public void getObject() throws Exception {
+        TransmissionResponse object = JsonUtil.getObject(TransmissionResponse.class, "{\"arguments\":{},\"result\":\"success\"}");
+        log.info(object.getResult());
     }
 }

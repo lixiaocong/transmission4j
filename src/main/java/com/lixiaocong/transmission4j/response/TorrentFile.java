@@ -28,43 +28,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j.request.session;
+package com.lixiaocong.transmission4j.response;
 
-import com.lixiaocong.transmission4j.request.TransmissionRequest;
-
-import java.util.HashMap;
-import java.util.Map;
-
-public class SessionSetRequest extends TransmissionRequest
+public class TorrentFile
 {
-    private Map<String, Object> arguments;
+    private long bytesCompleted;
+    private long length;
+    private String name;
 
-    public SessionSetRequest()
+    public long getBytesCompleted()
     {
-        super("session-set");
-        this.arguments = new HashMap<>();
+        return bytesCompleted;
     }
 
-    public Map<String, Object> getArguments()
+    public void setBytesCompleted(long bytesCompleted)
     {
-        return arguments;
+        this.bytesCompleted = bytesCompleted;
     }
 
-    public void setArguments(Map<String, Object> arguments)
+    public long getLength()
     {
-        this.arguments = arguments;
+        return length;
     }
 
-
-    //set the arguments
-
-    public void setAltSpeedDown(long speed)
+    public void setLength(long length)
     {
-        arguments.put("alt-speed-down", speed);
+        this.length = length;
     }
 
-    public void setAltSpeedEnabled(boolean enabled)
+    public String getName()
     {
-        arguments.put("alt-speed-enabled", enabled);
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
     }
 }

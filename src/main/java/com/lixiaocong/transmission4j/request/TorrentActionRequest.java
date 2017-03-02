@@ -28,14 +28,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j.request.session.stats;
+package com.lixiaocong.transmission4j.request;
 
-import com.lixiaocong.transmission4j.request.TransmissionRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class SessionStatsRequest extends TransmissionRequest
+class TorrentActionRequest extends TransmissionRequest
 {
-    public SessionStatsRequest()
+    private Map<String,Object> arguments;
+
+    TorrentActionRequest(String method, List<Integer> ids)
     {
-        super("session-stats");
+        super(method);
+        arguments = new HashMap<>();
+        if(ids!=null)
+            arguments.put("ids",ids);
+    }
+
+    public Map<String, Object> getArguments() {
+        return arguments;
+    }
+
+    public void setArguments(Map<String, Object> arguments) {
+        this.arguments = arguments;
     }
 }
+

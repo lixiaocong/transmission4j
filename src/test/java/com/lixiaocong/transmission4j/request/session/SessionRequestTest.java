@@ -32,6 +32,8 @@ package com.lixiaocong.transmission4j.request.session;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lixiaocong.transmission4j.request.SessionGetRequest;
+import com.lixiaocong.transmission4j.request.SessionSetRequest;
 import org.junit.Test;
 
 public class SessionRequestTest

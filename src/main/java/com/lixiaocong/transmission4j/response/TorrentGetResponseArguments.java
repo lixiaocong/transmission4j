@@ -28,27 +28,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j.request.torrent.add;
+package com.lixiaocong.transmission4j.response;
 
-import com.lixiaocong.transmission4j.request.TransmissionRequest;
+import java.util.List;
 
-public class TorrentAddRequest extends TransmissionRequest
+public class TorrentGetResponseArguments
 {
-    private TorrentAddArguments arguments;
+    List<Torrent> torrents;
 
-    public TorrentAddRequest(String metainfo)
+    public List<Torrent> getTorrents()
     {
-        super("torrent-add");
-        this.arguments = new TorrentAddArguments(metainfo);
+        return torrents;
     }
 
-    public TorrentAddArguments getArguments()
+    public void setTorrents(List<Torrent> torrents)
     {
-        return arguments;
-    }
-
-    public void setArguments(TorrentAddArguments arguments)
-    {
-        this.arguments = arguments;
+        this.torrents = torrents;
     }
 }

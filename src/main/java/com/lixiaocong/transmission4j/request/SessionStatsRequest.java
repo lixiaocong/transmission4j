@@ -28,21 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j.response.torrent.accessors;
+package com.lixiaocong.transmission4j.request;
 
-import java.util.List;
+import com.lixiaocong.transmission4j.request.TransmissionRequest;
 
-public class TorrentGetResponseArguments
+public class SessionStatsRequest extends TransmissionRequest
 {
-    List<Torrent> torrents;
-
-    public List<Torrent> getTorrents()
+    public SessionStatsRequest()
     {
-        return torrents;
-    }
-
-    public void setTorrents(List<Torrent> torrents)
-    {
-        this.torrents = torrents;
+        super("session-stats");
     }
 }

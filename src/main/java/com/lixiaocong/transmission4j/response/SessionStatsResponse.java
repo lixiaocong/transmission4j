@@ -28,14 +28,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.lixiaocong.transmission4j.request.session;
+package com.lixiaocong.transmission4j.response;
 
-import com.lixiaocong.transmission4j.request.TransmissionRequest;
-
-public class SessionGetRequest extends TransmissionRequest
+public class SessionStatsResponse extends TransmissionResponse
 {
-    public SessionGetRequest()
+    private SessionStatsResponseArguments arguments;
+
+    public SessionStatsResponseArguments getArguments()
     {
-        super("session-get");
+        return arguments;
+    }
+
+    public void setArguments(SessionStatsResponseArguments arguments)
+    {
+        this.arguments = arguments;
     }
 }
