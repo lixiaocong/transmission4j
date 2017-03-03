@@ -34,7 +34,7 @@ import java.util.List;
 
 public class TorrentGetResponseArguments
 {
-    List<Torrent> torrents;
+    private List<Torrent> torrents;
 
     public List<Torrent> getTorrents()
     {

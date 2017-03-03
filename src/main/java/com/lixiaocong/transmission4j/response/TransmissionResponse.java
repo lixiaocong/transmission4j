@@ -37,7 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TransmissionResponse
 {
-    protected String result;
+    private String result;
 
     public String getResult()
     {

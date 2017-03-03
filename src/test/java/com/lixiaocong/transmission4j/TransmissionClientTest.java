@@ -31,24 +31,26 @@
 package com.lixiaocong.transmission4j;
 
 import com.lixiaocong.transmission4j.exception.AuthException;
-import com.lixiaocong.transmission4j.exception.JsonException;
 import com.lixiaocong.transmission4j.exception.NetworkException;
 import com.lixiaocong.transmission4j.response.Torrent;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.LinkedList;
 import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
 public class TransmissionClientTest {
+    private Log log = LogFactory.getLog(getClass().getName());
     private TransmissionClient client;
 
     @Before
@@ -80,31 +82,49 @@ public class TransmissionClientTest {
         assert (exception instanceof NetworkException);
     }
 
-
     @Test
-    public void testTorrentStart() throws AuthException, NetworkException, JsonException {
+    public void startAll() throws Exception {
         assertTrue(client.startAll());
     }
 
     @Test
-    public void testTorrentStop() throws AuthException, NetworkException, JsonException {
+    public void start() throws Exception {
+        List<Torrent> torrents = client.getAll();
+        List<Integer> list = new LinkedList<>();
+        for (Torrent torrent : torrents)
+            list.add((int) torrent.getId());
+        client.start(list);
+    }
+
+    @Test
+    public void stopAll() throws Exception {
         assertTrue(client.stopAll());
     }
 
     @Test
-    public void testTorrentAdd() throws AuthException, NetworkException, IOException, JsonException {
-        File file = new File("/Users/lixiaocong/Downloads/test.torrent");
+    public void stop() throws Exception {
+        List<Torrent> torrents = client.getAll();
+        List<Integer> list = new LinkedList<>();
+        for (Torrent torrent : torrents)
+            list.add((int) torrent.getId());
+        client.stop(list);
+    }
+
+    @Test
+    public void add() throws Exception {
+        File file = new File("src/test/resources/test.torrent");
         InputStream in = new FileInputStream(file);
         int len = in.available();
         byte[] data = new byte[len];
         in.read(data, 0, len);
         String str = Base64.encode(data);
+        log.info(str);
         in.close();
         assertTrue(client.add(str));
     }
 
     @Test
-    public void testTorrentRemove() throws IOException, AuthException, NetworkException, JsonException {
+    public void removeAll() throws Exception {
         assertTrue(client.removeAll());
         try {
             Thread.sleep(1000);
@@ -115,14 +135,28 @@ public class TransmissionClientTest {
     }
 
     @Test
-    public void testTorrentGet() throws IOException, AuthException, NetworkException, JsonException {
-        List<Torrent> list = client.getAll();
-        for (Torrent torrent : list)
-            System.out.println(torrent.getName());
+    public void remove() throws Exception {
+        List<Torrent> torrents = client.getAll();
+        List<Integer> list = new LinkedList<>();
+        for (Torrent torrent : torrents)
+            list.add((int) torrent.getId());
+        client.remove(list);
     }
 
     @Test
-    public void testSessionStats() throws IOException, AuthException, NetworkException, JsonException {
-        System.out.println(client.sessionStats());
+    public void getAll() throws Exception {
+        List<Torrent> list = client.getAll();
+        for (Torrent torrent : list)
+            log.info(torrent.getName());
+    }
+
+    @Test
+    public void get() throws Exception {
+
+    }
+
+    @Test
+    public void sessionStats() throws Exception {
+        log.info(client.sessionStats());
     }
 }
