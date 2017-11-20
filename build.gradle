@@ -1,5 +1,4 @@
 group 'com.lixiaocong'
-version '0.3'
 
 apply plugin: 'java'
 apply plugin: 'idea'
@@ -9,13 +8,13 @@ targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    compile(
-            'com.fasterxml.jackson.core:jackson-databind:2.8.7',
-            'org.apache.httpcomponents:httpclient:4.5.3',
-            'commons-logging:commons-logging:1.2'
-    )
+    compile 'com.github.lixiaocong:spring-downloader:1.0'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.7'
+    compile 'org.apache.httpcomponents:httpclient:4.5.3'
+    compile 'commons-logging:commons-logging:1.2'
     testCompile 'junit:junit:4.12'
 }
